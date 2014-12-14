@@ -7,7 +7,7 @@ env:
   global:
     - DB=MYSQL CORE_RELEASE=3.1
   matrix:
-    - CORE_RELEASE=master
+    - CORE_RELEASE=3
 
 matrix:
   include:
@@ -24,13 +24,11 @@ matrix:
       before_install:
         - sudo apt-get update -qq
         - sudo apt-get install -y tidy
-  allow_failures:
-    - php: 5.4
-      env: DB=MYSQL CORE_RELASE=master
 
 
 before_script:
   - phpenv rehash
+  - composer self-update
   - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
   - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
   - cd ~/builds/ss
