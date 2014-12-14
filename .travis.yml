@@ -6,8 +6,6 @@ php:
 env:
   global:
     - DB=MYSQL CORE_RELEASE=3.1
-  matrix:
-    - CORE_RELEASE=3
 
 matrix:
   include:
