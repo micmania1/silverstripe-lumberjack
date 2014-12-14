@@ -1,18 +1,33 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
-  - 5.5
-  - 5.6
 
 env:
-  - DB=MYSQL CORE_RELEASE=3.1
-  - DB=MYSQL CORE_RELEASE=master
-  - DB=PGSQL CORE_RELEASE=3.1
-  - DB=PGSQL CORE_RELEASE=master
+  global:
+    - DB=MYSQL CORE_RELEASE=3.1
+  matrix:
+    - CORE_RELEASE=master
 
 matrix:
+  include:
+    - php: 5.5
+      env: DB=MYSQL
+    - php: 5.6
+      env: DB=MYSQL
+    - php: 5.4
+      env: DB=MYSQL
+    - php: 5.3
+      env: DB=MYSQL
+    - php: hhvm-nightly
+      env: DB=MYSQL
+      before_install:
+        - sudo apt-get update -qq
+        - sudo apt-get install -y tidy
+  allow_failures:
+    - php: 5.4
+      env: DB=MYSQL CORE_RELASE=master
+
 
 before_script:
   - phpenv rehash

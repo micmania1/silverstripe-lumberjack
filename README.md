@@ -65,6 +65,9 @@ the `SiteTree` or `Page` class.
 	  extensions:
 	    - 'Lumberjack'
 	
+	BlogEntry:
+	  show_in_sitetree: false
+	
 
 
 
