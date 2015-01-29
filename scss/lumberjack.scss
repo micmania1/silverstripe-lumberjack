@@ -16,27 +16,22 @@
 		}
 	}
 
-	table.ss-gridfield-table {
-		tr {
-			td {
-				.gridfield-icon {
-					width: 16px;
-					height: 16px;
-					display: block;
-					float: left;
-					margin-right: 6px;
-				}
-				.modified {
-					margin-left: 5px;
-					color: #7E7470;
-					background-color: #fff0bc;
-					padding: 1px 3px;
-					border: 1px solid #C9B800;
-					font-size: 80%;
-					border-radius: 3px;
-					text-transform: uppercase;
-				}
-			}
-		}
+
+	.gridfield-icon i {
+		width: 16px;
+		height: 16px;
+		display: block;
+		float: left;
+		margin-right: 6px;
+	}
+	.modified {
+		margin-left: 5px;
+		color: #7E7470;
+		background-color: #fff0bc;
+		padding: 1px 3px;
+		border: 1px solid #C9B800;
+		font-size: 80%;
+		border-radius: 3px;
+		text-transform: uppercase;
 	}
 }
