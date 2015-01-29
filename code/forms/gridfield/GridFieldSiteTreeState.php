@@ -37,7 +37,7 @@ class GridFieldSiteTreeState implements GridField_ColumnProvider {
 				if(!$published) {
 					return _t(
 						"GridFieldSiteTreeState.Draft",
-						'<i class="btn-icon blog-icon btn-icon-pencil"></i> Saved as Draft on {date}',
+						'<i class="btn-icon gridfield-icon btn-icon-pencil"></i> Saved as Draft on {date}',
 						"State for when a post is saved.", 
 						array(
 							"date" => $record->dbObject("LastEdited")->Nice()
@@ -46,7 +46,7 @@ class GridFieldSiteTreeState implements GridField_ColumnProvider {
 				} else {
 					return _t(
 						"GridFieldSiteTreeState.Published",
-						'<i class="btn-icon blog-icon btn-icon-accept"></i> Published on {date}', 
+						'<i class="btn-icon gridfield-icon btn-icon-accept"></i> Published on {date}',
 						"State for when a post is published.", 
 						array(
 							"date" => $record->dbObject("LastEdited")->Nice()

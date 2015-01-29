@@ -13,16 +13,16 @@
   font-size: 12px;
   margin-top: 0.24em;
 }
-/* line 22, ../scss/lumberjack.scss */
-.cms table.ss-gridfield-table tr td .gridfield-icon {
+/* line 20, ../scss/lumberjack.scss */
+.cms .gridfield-icon i {
   width: 16px;
   height: 16px;
   display: block;
   float: left;
   margin-right: 6px;
 }
-/* line 29, ../scss/lumberjack.scss */
-.cms table.ss-gridfield-table tr td .modified {
+/* line 27, ../scss/lumberjack.scss */
+.cms .modified {
   margin-left: 5px;
   color: #7E7470;
   background-color: #fff0bc;
