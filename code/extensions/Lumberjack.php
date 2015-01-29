@@ -108,7 +108,7 @@ class Lumberjack extends Hierarchy {
 	 */
 	protected function shouldFilter() {
 		$controller = Controller::curr();
-		return get_class($controller) == "CMSPagesController"
+		return $controller instanceof LeftAndMain
 			&& in_array($controller->getAction(), array("treeview", "listview", "getsubtree"));
 	}
 
