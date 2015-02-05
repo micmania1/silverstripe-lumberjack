@@ -45,7 +45,7 @@ class Lumberjack extends Hierarchy {
 				"ChildPages",
 				$this->getLumberjackTitle(),
 				$pages,
-				GridFieldConfig_Lumberjack::create()
+				$this->getLumberjackGridFieldConfig()
 			);
 
 			$tab = new Tab('ChildPages', $this->getLumberjackTitle(), $gridField);
@@ -98,6 +98,19 @@ class Lumberjack extends Hierarchy {
 			return $this->owner->getLumberjackTitle();
 		}
 		return _t("Lumberjack.TabTitle", "Child Pages");
+	}
+
+
+	/**
+	 * This returns the gird field config for the lumberjack gridfield.
+	 *
+	 * @return GridFieldConfig
+	 */
+	protected function getLumberjackGridFieldConfig() {
+		if(method_exists($this->owner, 'getLumberjackGridFieldConfig')) {
+			return $this->owner->getLumberjackGridFieldConfig();
+		}
+		return GridFieldConfig_Lumberjack::create();
 	}
 
 
