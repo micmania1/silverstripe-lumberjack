@@ -35,10 +35,15 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 			return array();
 		}
 
+		$state = $gridField->State->GridFieldSiteTreeAddNewButton;
+		$state->currentPageID = $parent->ID;
+
 		$children = $this->getAllowedChildren($parent);
 		if(count($children) > 1) {
 			$pageTypes = DropdownField::create("PageType", "Page Type", $children, $model->defaultChild());
 			$pageTypes->setFieldHolderTemplate("GridFieldSiteTreeAddNewButton_holder")->addExtraClass("gridfield-dropdown no-change-track");
+
+			$state->pageType = $parent->defaultChild();
 
 			if(!$this->buttonName) {
 				$this->buttonName = _t('GridFieldSiteTreeAddNewButton.AddMultipleOptions', 'Add new', "Add button text for multiple options.");
@@ -47,14 +52,12 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 			$keys = array_keys($children);
 			$pageTypes = HiddenField::create('PageType', 'Page Type', $keys[0]);
 
+			$state->pageType = $keys[0];
+
 			if(!$this->buttonName) {
 				$this->buttonName = _t('GridFieldSiteTreeAddNewButton.Add', 'Add new {name}', 'Add button text for a single option.', array($children[$keys[0]]));
 			}
 		}
-
-		$state = $gridField->State->GridFieldSiteTreeAddNewButton;
-		$state->currentPageID = $parent->ID;
-		$state->pageType = $parent->defaultChild();
 
 		$addAction = new GridField_FormAction($gridField, 'add', $this->buttonName, 'add', 'add');
 		$addAction->setAttribute('data-icon', 'add')->addExtraClass("no-ajax ss-ui-action-constructive dropdown-action");
