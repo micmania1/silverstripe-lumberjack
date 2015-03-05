@@ -21,7 +21,7 @@ class Lumberjack extends Hierarchy {
 		$classes = array();
 		$siteTreeClasses = $this->owner->allowedChildren();
 		foreach($siteTreeClasses as $class) {
-			if(Injector::inst()->create($class)->config()->show_in_sitetree === false) {
+			if(Config::inst()->get($class, 'show_in_sitetree') === false) {
 				$classes[$class] = $class;
 			}
 		}
