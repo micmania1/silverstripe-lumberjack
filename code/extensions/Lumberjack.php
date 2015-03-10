@@ -57,9 +57,10 @@ class Lumberjack extends Hierarchy {
 	/**
 	 * Augments (@link Hierarchy::stageChildren()}
 	 *
-	 * @param $staged DataList
-	 * @param $showAll boolean
-	 **/
+	 * @param boolean showAll Include all of the elements, even those not shown in the menus.
+	 *   (only applicable when extension is applied to {@link SiteTree}).
+	 * @return DataList
+	 */
 	public function stageChildren($showAll = false) {
 		$staged = parent::stageChildren($showAll);
 
@@ -72,11 +73,13 @@ class Lumberjack extends Hierarchy {
 
 
 	/**
-	 * Augments (@link Hierarchy::liveChildren()}
+	 * Augments (@link Hierarchy::liveChildren()} by hiding excluded child classnames
 	 *
-	 * @param $staged DataList
-	 * @param $showAll boolean
-	 **/
+	 * @param boolean $showAll Include all of the elements, even those not shown in the menus.
+	 *   (only applicable when extension is applied to {@link SiteTree}).
+	 * @param boolean $onlyDeletedFromStage Only return items that have been deleted from stage
+	 * @return SS_List
+	 */
 	public function liveChildren($showAll = false, $onlyDeletedFromStage = false) {
 		$staged = parent::liveChildren($showAll, $onlyDeletedFromStage);
 
@@ -84,6 +87,7 @@ class Lumberjack extends Hierarchy {
 			// Filter the SiteTree
 			return $staged->exclude("ClassName", $this->owner->getExcludedSiteTreeClassNames());
 		}
+		return $staged;
 	}
 
 
