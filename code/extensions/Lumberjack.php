@@ -37,10 +37,20 @@ class Lumberjack extends Hierarchy {
 	public function updateCMSFields(FieldList $fields) {
 		$excluded = $this->owner->getExcludedSiteTreeClassNames();
 		if(!empty($excluded)) {
-			$pages = SiteTree::get()->filter(array(
-				'ParentID' => $this->owner->ID,
-				'ClassName' => $excluded
-			));
+
+			// if we only have one $excluded class, use it instead of SiteTree
+			if (count($excluded) == 1) {
+				$pages = DataObject::get(array_keys($excluded)[0])->filter(array(
+					'ParentID' => $this->owner->ID,
+					'ClassName' => $excluded
+				));
+			}
+			else {
+				$pages = SiteTree::get()->filter(array(
+					'ParentID' => $this->owner->ID,
+					'ClassName' => $excluded
+				));
+			}
 			$gridField = new GridField(
 				"ChildPages",
 				$this->getLumberjackTitle(),
