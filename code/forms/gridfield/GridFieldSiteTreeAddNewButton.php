@@ -20,7 +20,10 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 	 * @return boolean
 	 */
 	public function getAllowedChildren(SiteTree $parent) {
-		if(!$parent->canAddChildren()) return array();
+		if(!$parent || !$parent->canAddChildren()) {
+			return array();
+		}
+
 		$allowedChildren = $parent->allowedChildren();
 		$children = array();
 		foreach($allowedChildren as $class) {
@@ -38,9 +41,13 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 	}
 
 	public function getHTMLFragments($gridField) {
-		$parent = SiteTree::get()->byId(Controller::curr()->currentPageID());
 		$state = $gridField->State->GridFieldSiteTreeAddNewButton;
-		$state->currentPageID = $parent->ID;
+
+		$parent = SiteTree::get()->byId(Controller::curr()->currentPageID());
+
+		if($parent) {
+			$state->currentPageID = $parent->ID;
+		}
 
 		$children = $this->getAllowedChildren($parent);
 		if(empty($children)) {
