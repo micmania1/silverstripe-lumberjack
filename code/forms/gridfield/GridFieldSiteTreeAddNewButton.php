@@ -19,7 +19,7 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 	 * @param SiteTree $parent
 	 * @return boolean
 	 */
-	public function getAllowedChildren(SiteTree $parent) {
+	public function getAllowedChildren(SiteTree $parent = null) {
 		if(!$parent || !$parent->canAddChildren()) {
 			return array();
 		}
