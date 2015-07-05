@@ -31,23 +31,23 @@ class GridFieldSiteTreeState implements GridField_ColumnProvider {
 				$modifiedLabel = "";
 				if($record->isModifiedOnStage) {
 					$modifiedLabel = "<span class='modified'>" . _t("GridFieldSiteTreeState.Modified") . "</span>";
-				} 
+				}
 
-				$published = $record->isPublished();
-				if(!$published) {
-					return _t(
-						"GridFieldSiteTreeState.Draft",
-						'<i class="btn-icon gridfield-icon btn-icon-pencil"></i> Saved as Draft on {date}',
-						"State for when a post is saved.", 
-						array(
-							"date" => $record->dbObject("LastEdited")->Nice()
-						)
-					);
+				if($record->IsDeletedFromStage) {
+					if($record->ExistsOnLive) {
+						return _t('SiteTree.REMOVEDFROMDRAFTHELP', 'Page is published, but has been deleted from draft');
+					} else {
+						return _t('SiteTree.DELETEDPAGEHELP', 'Page is no longer published');
+					}
+				} else if($record->IsAddedToStage) {
+					return _t('SiteTree.ADDEDTODRAFTHELP', "Page has not been published yet");
+				} else if($record->IsModifiedOnStage) {
+					return _t('SiteTree.MODIFIEDONDRAFTHELP', 'Page has unpublished changes');
 				} else {
 					return _t(
 						"GridFieldSiteTreeState.Published",
 						'<i class="btn-icon gridfield-icon btn-icon-accept"></i> Published on {date}',
-						"State for when a post is published.", 
+						"State for when a post is published.",
 						array(
 							"date" => $record->dbObject("LastEdited")->Nice()
 						)
