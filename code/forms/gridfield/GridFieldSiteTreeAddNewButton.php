@@ -24,6 +24,7 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 			return array();
 		}
 
+		$nonHiddenPageTypes = SiteTree::page_type_classes();
 		$allowedChildren = $parent->allowedChildren();
 		$children = array();
 		foreach($allowedChildren as $class) {
@@ -32,7 +33,7 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 				// Note: Second argument to SiteTree::canCreate will support inherited permissions
 				// post 3.1.12, and will default to the old permission model in 3.1.11 or below
 				// See http://docs.silverstripe.org/en/changelogs/3.1.11
-				if($instance->canCreate(null, array('Parent' => $parent))) {
+				if($instance->canCreate(null, array('Parent' => $parent)) && in_array($class, $nonHiddenPageTypes)) {
 					$children[$class] = $instance->i18n_singular_name();
 				}
 			}
