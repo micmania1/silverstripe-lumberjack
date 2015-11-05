@@ -15,7 +15,7 @@ This module was born out of and decoupled from [micmania1/silverstripe-blog](htt
 
 ## Installation
 
-	composer require micmania1/silverstripe-lumberjack
+	composer require silverstripe/silverstripe-lumberjack
 
 ## Features
 
