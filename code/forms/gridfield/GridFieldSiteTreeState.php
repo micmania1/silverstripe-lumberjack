@@ -30,7 +30,7 @@ class GridFieldSiteTreeState implements GridField_ColumnProvider {
 			if($record->hasMethod("isPublished")) {
 				$modifiedLabel = "";
 				if($record->isModifiedOnStage) {
-					$modifiedLabel = "<span class='modified'>" . _t("GridFieldSiteTreeState.Modified") . "</span>";
+					$modifiedLabel = "<span class='modified'>" . _t("GridFieldSiteTreeState.Modified", "Modified") . "</span>";
 				} 
 
 				$published = $record->isPublished();

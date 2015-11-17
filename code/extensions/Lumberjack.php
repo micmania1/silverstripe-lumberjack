@@ -10,7 +10,7 @@
  *
  * @author Michael Strong <mstrong@silverstripe.org>
  */
-class Lumberjack extends Hierarchy {
+class Lumberjack extends SiteTreeExtension {
 
 	/**
 	 * Loops through subclasses of the owner (intended to be SiteTree) and checks if they've been hidden.
@@ -21,7 +21,7 @@ class Lumberjack extends Hierarchy {
 		$classes = array();
 		$siteTreeClasses = $this->owner->allowedChildren();
 		foreach($siteTreeClasses as $class) {
-			if(Injector::inst()->create($class)->config()->show_in_sitetree === false) {
+			if(Config::inst()->get($class, 'show_in_sitetree') === false) {
 				$classes[$class] = $class;
 			}
 		}
@@ -45,7 +45,7 @@ class Lumberjack extends Hierarchy {
 				"ChildPages",
 				$this->getLumberjackTitle(),
 				$pages,
-				GridFieldConfig_Lumberjack::create()
+				$this->getLumberjackGridFieldConfig()
 			);
 
 			$tab = new Tab('ChildPages', $this->getLumberjackTitle(), $gridField);
@@ -57,11 +57,19 @@ class Lumberjack extends Hierarchy {
 	/**
 	 * Augments (@link Hierarchy::stageChildren()}
 	 *
-	 * @param $staged DataList
-	 * @param $showAll boolean
-	 **/
+	 * @param boolean showAll Include all of the elements, even those not shown in the menus.
+	 *   (only applicable when extension is applied to {@link SiteTree}).
+	 * @return DataList
+	 */
 	public function stageChildren($showAll = false) {
-		$staged = parent::stageChildren($showAll);
+		$baseClass = ClassInfo::baseDataClass($this->owner->class);
+		$staged = $baseClass::get()
+			->filter('ParentID', (int)$this->owner->ID)
+			->exclude('ID', (int)$this->owner->ID);
+		if (!$showAll && $this->owner->db('ShowInMenus')) {
+			$staged = $staged->filter('ShowInMenus', 1);
+		}
+		$this->owner->extend("augmentStageChildren", $staged, $showAll);
 
 		if($this->shouldFilter()) {
 			// Filter the SiteTree
@@ -72,18 +80,32 @@ class Lumberjack extends Hierarchy {
 
 
 	/**
-	 * Augments (@link Hierarchy::liveChildren()}
+	 * Augments (@link Hierarchy::liveChildren()} by hiding excluded child classnames
 	 *
-	 * @param $staged DataList
-	 * @param $showAll boolean
-	 **/
+	 * @param boolean $showAll Include all of the elements, even those not shown in the menus.
+	 *   (only applicable when extension is applied to {@link SiteTree}).
+	 * @param boolean $onlyDeletedFromStage Only return items that have been deleted from stage
+	 * @return SS_List
+	 */
 	public function liveChildren($showAll = false, $onlyDeletedFromStage = false) {
-		$staged = parent::liveChildren($showAll, $onlyDeletedFromStage);
+		$baseClass = ClassInfo::baseDataClass($this->owner->class);
+		$children = $baseClass::get()
+			->filter('ParentID', (int)$this->owner->ID)
+			->exclude('ID', (int)$this->owner->ID)
+			->setDataQueryParam(array(
+				'Versioned.mode' => $onlyDeletedFromStage ? 'stage_unique' : 'stage',
+				'Versioned.stage' => 'Live'
+			));
+
+		if(!$showAll) {
+			$children = $children->filter('ShowInMenus', 1);
+		}
 
 		if($this->shouldFilter()) {
 			// Filter the SiteTree
-			return $staged->exclude("ClassName", $this->owner->getExcludedSiteTreeClassNames());
+			return $children->exclude("ClassName", $this->owner->getExcludedSiteTreeClassNames());
 		}
+		return $children;
 	}
 
 
@@ -102,13 +124,26 @@ class Lumberjack extends Hierarchy {
 
 
 	/**
+	 * This returns the gird field config for the lumberjack gridfield.
+	 *
+	 * @return GridFieldConfig
+	 */
+	protected function getLumberjackGridFieldConfig() {
+		if(method_exists($this->owner, 'getLumberjackGridFieldConfig')) {
+			return $this->owner->getLumberjackGridFieldConfig();
+		}
+		return GridFieldConfig_Lumberjack::create();
+	}
+
+
+	/**
 	 * Checks if we're on a controller where we should filter. ie. Are we loading the SiteTree?
 	 *
 	 * @return bool
 	 */
 	protected function shouldFilter() {
 		$controller = Controller::curr();
-		return get_class($controller) == "CMSPagesController"
+		return $controller instanceof LeftAndMain
 			&& in_array($controller->getAction(), array("treeview", "listview", "getsubtree"));
 	}
 
