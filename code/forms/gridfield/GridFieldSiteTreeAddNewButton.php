@@ -120,6 +120,12 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 				"PageType" => $tmpData['pageType']
 			);
 
+			// If Translatable is active, set the Locale (this will no longer be needed after a post-2.1.1
+			// Translatable patch; see https://github.com/silverstripe/silverstripe-lumberjack/pull/32 for more info)
+			if(singleton('SiteTree')->hasExtension('Translatable')) {
+				$data['Locale'] = Translatable::get_current_locale();
+			}
+
 			$controller = Injector::inst()->create("CMSPageAddController");
 
 			$form = $controller->AddForm();
