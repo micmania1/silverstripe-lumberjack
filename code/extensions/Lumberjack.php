@@ -84,6 +84,8 @@ class Lumberjack extends Hierarchy {
 			// Filter the SiteTree
 			return $staged->exclude("ClassName", $this->owner->getExcludedSiteTreeClassNames());
 		}
+		
+		return $staged;
 	}
 
 
