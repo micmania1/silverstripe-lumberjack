@@ -1,6 +1,7 @@
 sk:
   GridFieldSiteTreeAddNewButton:
     Add: 'Pridať {name}'
+    AddMultipleOptions: 'Pridať'
   GridFieldSiteTreeState:
     Draft: '<i class="btn-icon gridfield-icon btn-icon-pencil"></i> Uložený ako koncept: {date}'
     Modified: zmenené
