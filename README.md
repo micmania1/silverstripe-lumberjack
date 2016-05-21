@@ -1,6 +1,7 @@
 # SilverStripe Lumberjack
 
 [![Build Status](https://travis-ci.org/silverstripe/silverstripe-lumberjack.svg?branch=1.1)](https://travis-ci.org/silverstripe/silverstripe-lumberjack) [![Latest Stable Version](https://poser.pugx.org/silverstripe/lumberjack/v/stable)](https://packagist.org/packages/silverstripe/lumberjack) [![Latest Unstable Version](https://poser.pugx.org/silverstripe/lumberjack/v/unstable)](https://packagist.org/packages/silverstripe/lumberjack) [![License](https://poser.pugx.org/silverstripe/lumberjack/license)](https://packagist.org/packages/silverstripe/lumberjack)
+![helpfulrobot](https://helpfulrobot.io/silverstripe/lumberjack/badge)
 
 A module to make managing pages in a GridField easy without losing any of the functionality that you're used to in the CMS.
 
