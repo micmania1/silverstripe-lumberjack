@@ -135,7 +135,7 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
             // Get the current record
             $record = SiteTree::get()->byId($controller->currentPageID());
             if ($record) {
-                $response->redirect(Director::absoluteBaseURL() . $record->CMSEditLink(), 301);
+                $response->redirect($record->CMSEditLink(), 301);
             }
             return $response;
         }
