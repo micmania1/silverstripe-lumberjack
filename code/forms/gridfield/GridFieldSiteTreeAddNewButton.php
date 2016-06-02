@@ -13,32 +13,51 @@
 class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 	implements GridField_ActionProvider {
 
+	/**
+	 * Determine the list of classnames and titles allowed for a given parent object
+	 *
+	 * @param SiteTree $parent
+	 * @return boolean
+	 */
+	public function getAllowedChildren(SiteTree $parent = null) {
+		if(!$parent || !$parent->canAddChildren()) {
+			return array();
+		}
 
-	public function getAllowedChildren(SiteTree $parent) {
+		$nonHiddenPageTypes = SiteTree::page_type_classes();
 		$allowedChildren = $parent->allowedChildren();
-		if(empty($allowedChildren)) return array();
-
 		$children = array();
 		foreach($allowedChildren as $class) {
 			if(Config::inst()->get($class, "show_in_sitetree") === false) {
-				$children[$class] = Injector::inst()->create($class)->i18n_singular_name();
+				$instance = Injector::inst()->get($class);
+				// Note: Second argument to SiteTree::canCreate will support inherited permissions
+				// post 3.1.12, and will default to the old permission model in 3.1.11 or below
+				// See http://docs.silverstripe.org/en/changelogs/3.1.11
+				if($instance->canCreate(null, array('Parent' => $parent)) && in_array($class, $nonHiddenPageTypes)) {
+					$children[$class] = $instance->i18n_singular_name();
+				}
 			}
 		}
 		return $children;
 	}
 
 	public function getHTMLFragments($gridField) {
-		$model = Injector::inst()->create($gridField->getModelClass());
+		$state = $gridField->State->GridFieldSiteTreeAddNewButton;
+
 		$parent = SiteTree::get()->byId(Controller::curr()->currentPageID());
 
-		if(!$model->canCreate()) {
-			return array();
+		if($parent) {
+			$state->currentPageID = $parent->ID;
 		}
 
 		$children = $this->getAllowedChildren($parent);
-		if(count($children) > 1) {
-			$pageTypes = DropdownField::create("PageType", "Page Type", $children, $model->defaultChild());
+		if(empty($children)) {
+			return array();
+		} else if(count($children) > 1) {
+			$pageTypes = DropdownField::create("PageType", "Page Type", $children, $parent->defaultChild());
 			$pageTypes->setFieldHolderTemplate("GridFieldSiteTreeAddNewButton_holder")->addExtraClass("gridfield-dropdown no-change-track");
+
+			$state->pageType = $parent->defaultChild();
 
 			if(!$this->buttonName) {
 				$this->buttonName = _t('GridFieldSiteTreeAddNewButton.AddMultipleOptions', 'Add new', "Add button text for multiple options.");
@@ -47,14 +66,12 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 			$keys = array_keys($children);
 			$pageTypes = HiddenField::create('PageType', 'Page Type', $keys[0]);
 
+			$state->pageType = $keys[0];
+
 			if(!$this->buttonName) {
 				$this->buttonName = _t('GridFieldSiteTreeAddNewButton.Add', 'Add new {name}', 'Add button text for a single option.', array($children[$keys[0]]));
 			}
 		}
-
-		$state = $gridField->State->GridFieldSiteTreeAddNewButton;
-		$state->currentPageID = $parent->ID;
-		$state->pageType = $parent->defaultChild();
 
 		$addAction = new GridField_FormAction($gridField, 'add', $this->buttonName, 'add', 'add');
 		$addAction->setAttribute('data-icon', 'add')->addExtraClass("no-ajax ss-ui-action-constructive dropdown-action");
@@ -75,8 +92,7 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 	/**
 	 * Provide actions to this component.
 	 *
-	 * @param $gridField GridField
-	 *
+	 * @param GridField $gridField
 	 * @return array
 	**/
 	public function getActions($gridField) {
@@ -88,21 +104,27 @@ class GridFieldSiteTreeAddNewButton extends GridFieldAddNewButton
 	/**
 	 * Handles the add action, but only acts as a wrapper for {@link CMSPageAddController::doAdd()}
 	 *
-	 * @param $gridFIeld GridFIeld
-	 * @param $actionName string
-	 * @param $arguments mixed
-	 * @param $data array
+	 * @param GridField $gridField
+	 * @param string $actionName
+	 * @param mixed $arguments
+	 * @param array $data
 	**/
 	public function handleAction(GridField $gridField, $actionName, $arguments, $data) {
 
 		if($actionName == "add") {
 			$tmpData = json_decode($data['ChildPages']['GridState'], true);
 			$tmpData = $tmpData['GridFieldSiteTreeAddNewButton'];
-			
+
 			$data = array(
 				"ParentID" => $tmpData['currentPageID'],
 				"PageType" => $tmpData['pageType']
 			);
+
+			// If Translatable is active, set the Locale (this will no longer be needed after a post-2.1.1
+			// Translatable patch; see https://github.com/silverstripe/silverstripe-lumberjack/pull/32 for more info)
+			if(singleton('SiteTree')->hasExtension('Translatable')) {
+				$data['Locale'] = Translatable::get_current_locale();
+			}
 
 			$controller = Injector::inst()->create("CMSPageAddController");
 
