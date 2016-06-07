@@ -48,8 +48,7 @@ class Lumberjack extends Hierarchy {
 				GridFieldConfig_Lumberjack::create()
 			);
 
-			$tab = new Tab('ChildPages', $this->getLumberjackTitle(), $gridField);
-			$fields->insertAfter($tab, 'Main');
+			$fields->addFieldToTab("Root.".$this->getLumberjackTitle(), $gridField);
 		}
 	}
 
