@@ -11,5 +11,8 @@
             "name": "Michael Strong",
             "email": "mstrong@silverstripe.org"
         }
-    ]
+    ],
+    "extra": {
+		"installer-name": "lumberjack"
+	}
 }
